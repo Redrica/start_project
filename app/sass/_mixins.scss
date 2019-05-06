@@ -15,3 +15,108 @@
     @content;
   }
 }
+
+
+
+
+// SCSS variables are information about icon's compiled state, stored under its original file name
+//
+// .icon-home {
+//   width: $icon-home-width;
+// }
+//
+// The large array-like variables contain all information about a single icon
+// $icon-home: x y offset_x offset_y width height total_width total_height image_path;
+//
+// At the bottom of this section, we provide information about the spritesheet itself
+// $spritesheet: width height image $spritesheet-sprites;
+
+$s-behance: (133px, 0px, -133px, 0px, 128px, 128px, 527px, 394px, 'sprite.png', 's-Behance', );
+$s-dribbble: (266px, 133px, -266px, -133px, 128px, 128px, 527px, 394px, 'sprite.png', 's-Dribbble', );
+$s-facebook: (0px, 133px, 0px, -133px, 128px, 128px, 527px, 394px, 'sprite.png', 's-Facebook', );
+$s-github: (133px, 133px, -133px, -133px, 128px, 128px, 527px, 394px, 'sprite.png', 's-Github', );
+$s-google-plus: (266px, 0px, -266px, 0px, 128px, 128px, 527px, 394px, 'sprite.png', 's-GooglePlus', );
+$s-instagram: (0px, 0px, 0px, 0px, 128px, 128px, 527px, 394px, 'sprite.png', 's-Instagram', );
+$s-linkedin: (0px, 266px, 0px, -266px, 128px, 128px, 527px, 394px, 'sprite.png', 's-Linkedin', );
+$s-pinterest: (133px, 266px, -133px, -266px, 128px, 128px, 527px, 394px, 'sprite.png', 's-Pinterest', );
+$s-twitter: (266px, 266px, -266px, -266px, 128px, 128px, 527px, 394px, 'sprite.png', 's-Twitter', );
+$s-whats-app: (399px, 0px, -399px, 0px, 128px, 128px, 527px, 394px, 'sprite.png', 's-WhatsApp', );
+$s-you-tube-name: 's-YouTube'; //0
+$s-you-tube-x: 399px; //1
+$s-you-tube-y: 133px;  //2
+$s-you-tube-offset-x: -399px; //3
+$s-you-tube-offset-y: -133px; //4
+$s-you-tube-width: 128px; //5
+$s-you-tube-height: 128px; //6
+$s-you-tube-total-width: 527px; //7
+$s-you-tube-total-height: 394px; //8
+$s-you-tube-image: 'sprite.png'; //9
+$s-you-tube: (399px, 133px, -399px, -133px, 128px, 128px, 527px, 394px, 'sprite.png', 's-YouTube', );
+$spritesheet-width: 527px;
+$spritesheet-height: 394px;
+$spritesheet-image: 'sprite.png';
+$spritesheet-sprites: ($s-behance, $s-dribbble, $s-facebook, $s-github, $s-google-plus, $s-instagram, $s-linkedin, $s-pinterest, $s-twitter, $s-whats-app, $s-you-tube, );
+$spritesheet: (527px, 394px, 'sprite.png', $spritesheet-sprites, );
+
+// The provided mixins are intended to be used with the array-like variables
+//
+// .icon-home {
+//   @include sprite-width($icon-home);
+// }
+//
+// .icon-email {
+//   @include sprite($icon-email);
+// }
+//
+// Example usage in HTML:
+//
+// `display: block` sprite:
+// <div class="icon-home"></div>
+//
+// To change `display` (e.g. `display: inline-block;`), we suggest using a common CSS class:
+//
+// // CSS
+// .icon {
+//   display: inline-block;
+// }
+//
+// // HTML
+// <i class="icon icon-home"></i>
+@mixin sprite-width($sprite) {
+  width: nth($sprite, 5);
+}
+
+@mixin sprite-height($sprite) {
+  height: nth($sprite, 6);
+}
+
+@mixin sprite-position($sprite) {
+  $sprite-offset-x: nth($sprite, 3);
+  $sprite-offset-y: nth($sprite, 4);
+  background-position: $sprite-offset-x  $sprite-offset-y;
+}
+
+@mixin sprite-image($sprite) {
+  $sprite-image: nth($sprite, 9);
+  background-image: url(../img/#{$sprite-image});
+}
+
+@mixin sprite($sprite) {
+  @include sprite-image($sprite);
+  @include sprite-position($sprite);
+  @include sprite-width($sprite);
+  @include sprite-height($sprite);
+}
+
+// The `sprites` mixin generates identical output to the CSS template
+//   but can be overridden inside of SCSS
+//
+// @include sprites($spritesheet-sprites);
+@mixin sprites($sprites) {
+  @each $sprite in $sprites {
+    $sprite-name: nth($sprite, 10);
+    .#{$sprite-name} {
+      @include sprite($sprite);
+    }
+  }
+}

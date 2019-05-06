@@ -2,15 +2,18 @@ var gulp = require('gulp'),
     sass = require('gulp-sass'), //Подключаем Sass пакет
     browserSync = require('browser-sync').create(), // Подключаем Browser Sync
     pug = require('gulp-pug'), // Подключаем Pug
-    plumber = require("gulp-plumber"),
-    postcss = require("gulp-postcss"),
-    autoprefixer = require("autoprefixer"),
-    minify = require("gulp-csso"),
-    rename = require("gulp-rename"),
-    imagemin = require("gulp-imagemin"),
-    del = require("del"),
-    run = require("run-sequence"),
-    jsmin = require("gulp-jsmin");
+    plumber = require('gulp-plumber'),
+    postcss = require('gulp-postcss'),
+    autoprefixer = require('autoprefixer'),
+    minify = require('gulp-csso'),
+    rename = require('gulp-rename'),
+    imagemin = require('gulp-imagemin'),
+    del = require('del'),
+    run = require('run-sequence'),
+    jsmin = require('gulp-jsmin'),
+    spritesmith = require('gulp.spritesmith');
+
+
 
 gulp.task('pug', function buildHTML() {
     return gulp.src('app/pug/*.pug')
@@ -40,12 +43,12 @@ gulp.task('sass', function(){ // Создаем таск Sass
         }))
 });
 
-gulp.task("jscript", function () {
-    gulp.src("app/js/*.js")
+gulp.task('jscript', function () {
+    gulp.src('app/js/*.js')
         .pipe(plumber())
         .pipe(gulp.dest('docs/js/'))
         .pipe(jsmin())
-        .pipe(rename({suffix: ".min"}))
+        .pipe(rename({suffix: '.min'}))
         .pipe(gulp.dest('docs/js/'))
         .pipe(browserSync.reload({stream: true}));
 });
@@ -78,6 +81,26 @@ gulp.task('images', function () {
            verbose: true
        }))
        .pipe(gulp.dest('docs/img'))
+});
+
+gulp.task('sprite', function() {
+    var spriteData =
+        gulp.src('./app/img/sprite/*.*') // путь, откуда берем картинки для спрайта
+            .pipe(spritesmith({
+                imgName: 'sprite.png',
+                cssName: '_sprite.scss',
+                cssFormat: 'scss',
+                padding: 5,
+                algorithm: 'binary-tree',
+                cssVarMap: function(sprite) {
+                    sprite.name = 's-' + sprite.name
+                },
+                cssTemplate: 'scss.template.handlebars'
+            }));
+
+    spriteData.img.pipe(gulp.dest('./docs/img/')); // путь, куда сохраняем картинку
+    spriteData.css.pipe(gulp.dest('./app/sass/')); // путь, куда сохраняем стили
+    // spriteData.pipe(browserSync.reload({stream: true})); // Обновляем CSS на странице при изменении
 });
 
 gulp.task('browser-sync', function() { // Создаем таск browser-sync
